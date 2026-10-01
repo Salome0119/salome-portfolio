@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
+export const dynamic = 'force-static';
 /**
  * Favicon dinámico: monograma "S" sobre fondo oscuro con acento esmeralda.
  * Next.js lo expone automáticamente en /icon.
