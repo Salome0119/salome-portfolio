@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+/* =========================================================
+   TEMA GLOBAL — Tailwind CSS v4 (@theme)
+   Paleta: cyber-clean oscuro + verde esmeralda neón
+   ========================================================= */
+@theme {
+  --color-ink-950: #070b12;
+  --color-ink-900: #0b0f1a;
+  --color-ink-800: #0f172a;
+  --color-ink-700: #16203a;
+  --color-ink-600: #1e293b;
+
+  --color-neon-400: #34d399;
+  --color-neon-500: #10b981;
+  --color-neon-600: #059669;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-glow-pulse: glowPulse 3.5s ease-in-out infinite;
+  --animate-blink: blink 1.05s steps(2, start) infinite;
+  --animate-marquee: marquee 26s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-scan: scan 4.5s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes blink {
+  to { visibility: hidden; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 -80px, 0 -80px; }
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --cursor-x: 50vw;
+  --cursor-y: 50vh;
+}
+
+* {
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-ink-900);
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-neon-500) 40%, transparent);
+  color: #ecfdf5;
+}
+
+/* Scrollbar minimalista */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-ink-900); }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--color-neon-500) 35%, var(--color-ink-600));
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-900);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-neon-500); }
+
+/* =========================================================
+   UTILIDADES PERSONALIZADAS
+   ========================================================= */
+@utility glass {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, #ffffff 6%, transparent),
+    color-mix(in oklab, #ffffff 2%, transparent)
+  );
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in oklab, #ffffff 10%, transparent);
+}
+
+@utility text-gradient {
+  background: linear-gradient(100deg, #6ee7b7 0%, #10b981 45%, #5eead4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Tarjeta con glow dinámico siguiendo al cursor (--mx / --my los inyecta el JS) */
+@utility glow-card {
+  position: relative;
+  isolation: isolate;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--color-neon-500) 85%, transparent),
+    transparent 62%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.glow-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    300px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--color-neon-500) 14%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-card:hover::before,
+.glow-card:focus-within::before,
+.glow-card[data-active="true"]::before { opacity: 1; }
+.glow-card:hover::after,
+.glow-card:focus-within::after,
+.glow-card[data-active="true"]::after { opacity: 1; }
+.glow-card:hover { transform: translateY(-5px); }
+@media (prefers-reduced-motion: reduce) {
+  .glow-card:hover { transform: none; }
+}
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, #94a3b8 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, #94a3b8 8%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridDrift 18s linear infinite;
+}
+
+@utility noise-layer {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 260 260' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Resplandor global que sigue al cursor (se actualiza en CursorGlow.tsx) */
+@utility cursor-halo {
+  background: radial-gradient(
+    420px circle at var(--cursor-x) var(--cursor-y),
+    color-mix(in oklab, var(--color-neon-500) 13%, transparent),
+    transparent 70%
+  );
+}
+
+/* Ocultar cursor nativo en escritorio (el cursor glow lo reemplaza) */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-none,
+  .cursor-none * { cursor: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
